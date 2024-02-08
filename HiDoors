@@ -1,0 +1,68 @@
+local door = script.Parent
+local debounce = false
+local godModeEnabled = false
+
+local function toggleGodMode()
+    godModeEnabled = not godModeEnabled
+    if godModeEnabled then
+        print("God Mode activated")
+        
+        for _, monster in ipairs(game.Workspace:GetChildren()) do
+            if monster:IsA("Model") and monster:FindFirstChild("Humanoid") then
+                monster.Humanoid:TakeDamage(0)
+            end
+        end
+    else
+        print("God Mode deactivated")
+        
+        for _, monster in ipairs(game.Workspace:GetChildren()) do
+            if monster:IsA("Model") and monster:FindFirstChild("Humanoid") then
+                monster.Humanoid:TakeDamage(0)
+            end
+        end
+    end
+end
+
+local function onTouched(hit)
+    local character = hit.Parent
+    local player = game.Players:GetPlayerFromCharacter(character)
+    
+    if player and not debounce then
+        debounce = true
+        
+        local gui = Instance.new("ScreenGui")
+        gui.Name = "DoorGUI"
+        gui.Parent = game.Players.LocalPlayer.PlayerGui
+        
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0.2, 0, 0.2, 0)
+        frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+        frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        frame.Parent = gui
+        
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Text = "God Mode"
+        textLabel.Size = UDim2.new(1, 0, 0.2, 0)
+        textLabel.Position = UDim2.new(0, 0, 0, 0)
+        textLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        textLabel.Parent = frame
+        
+        local toggleButton = Instance.new("TextButton")
+        toggleButton.Text = "Toggle"
+        toggleButton.Size = UDim2.new(1, 0, 0.2, 0)
+        toggleButton.Position = UDim2.new(0, 0, 0.8, 0)
+        toggleButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        toggleButton.Parent = frame
+        toggleButton.MouseButton1Click:Connect(toggleGodMode)
+        
+        local function destroyGUI()
+            gui:Destroy()
+            debounce = false
+        end
+        
+        wait(5)
+        destroyGUI()
+    end
+end
+
+door.Touched:Connect(onTouched)
